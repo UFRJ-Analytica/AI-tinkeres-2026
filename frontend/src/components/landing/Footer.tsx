@@ -1,0 +1,74 @@
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { Leaf } from "lucide-react"
+
+const links = {
+  Produto: [
+    "Como Funciona",
+    "Para Seguradoras",
+    "Para Produtores",
+    "Modelo de Negócio",
+  ],
+  Empresa: ["Sobre a SafraViva", "Impacto", "Tecnologia", "Contato"],
+  Legal: ["Termos de Uso", "Privacidade", "Política de Cookies"],
+}
+
+export default function Footer() {
+  return (
+    <footer className="bg-slate-950 text-slate-400">
+      <div className="container mx-auto max-w-7xl px-4 pt-16 pb-8">
+        <div className="grid md:grid-cols-4 gap-10 mb-12">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              {/* bg-primary text-primary-foreground — reactivo ao tema */}
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+                <Leaf className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="font-bold text-white text-base">SafraViva</span>
+            </div>
+            <p className="text-sm leading-relaxed">
+              Inteligência climática para decisões mais seguras no
+              agronegócio brasileiro.
+            </p>
+            <div className="flex gap-1.5 flex-wrap">
+              {["ODS 2", "ODS 13", "ODS 17"].map((ods) => (
+                <Badge
+                  key={ods}
+                  variant="outline"
+                  className="border-slate-700 text-slate-500 text-[10px]"
+                >
+                  {ods}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {Object.entries(links).map(([section, items]) => (
+            <div key={section} className="space-y-4">
+              <h4 className="text-white font-semibold text-sm">{section}</h4>
+              <ul className="space-y-2.5">
+                {items.map((item) => (
+                  <li key={item}>
+                    <a
+                      href="#"
+                      className="text-sm hover:text-white transition-colors"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="bg-slate-800 mb-8" />
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-600">
+          <p>© 2026 SafraViva. Todos os direitos reservados.</p>
+          <p>Feito com dedicação para o agronegócio brasileiro 🌱</p>
+        </div>
+      </div>
+    </footer>
+  )
+}
