@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -86,8 +87,8 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button className="hidden md:flex">
-            Solicitar Demo
+          <Button className="hidden md:flex" asChild>
+            <Link to="/solicitar-demo">Solicitar Demo</Link>
           </Button>
 
           <Sheet open={open} onOpenChange={setOpen}>
@@ -124,7 +125,9 @@ export default function Navbar() {
                 ))}
               </div>
               <Separator className="my-4" />
-              <Button className="w-full">Solicitar Demo</Button>
+              <Button className="w-full" asChild>
+                <Link to="/solicitar-demo">Solicitar Demo</Link>
+              </Button>
             </SheetContent>
           </Sheet>
         </div>
