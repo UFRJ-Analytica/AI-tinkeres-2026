@@ -57,20 +57,13 @@ function MapClickHandler({ onClick }: { onClick: (ll: LatLng) => void }) {
   return null
 }
 
-// ── Culturas ─────────────────────────────────────────────────────────────────
+// ── Tipos ────────────────────────────────────────────────────────────────────
 
-const CULTURAS = [
-  { id: "soja",     label: "Soja",           emoji: "🫘" },
-  { id: "milho",    label: "Milho",          emoji: "🌽" },
-  { id: "algodao",  label: "Algodão",        emoji: "🌿" },
-  { id: "arroz",    label: "Arroz",          emoji: "🌾" },
-  { id: "feijao",   label: "Feijão",         emoji: "🫘" },
-  { id: "trigo",    label: "Trigo",          emoji: "🌾" },
-  { id: "cana",     label: "Cana-de-açúcar", emoji: "🎋" },
-  { id: "girassol", label: "Girassol",       emoji: "🌻" },
-  { id: "sorgo",    label: "Sorgo",          emoji: "🌾" },
-  { id: "amendoim", label: "Amendoim",       emoji: "🥜" },
-]
+interface Cultura {
+  id: string
+  label: string
+  emoji: string
+}
 
 // ── Steps config ─────────────────────────────────────────────────────────────
 
@@ -90,8 +83,16 @@ export default function DemoPage() {
   const [empresa, setEmpresa] = useState("")
   const [email, setEmail] = useState("")
   const [cultura, setCultura] = useState("")
+  const [culturas, setCulturas] = useState<Cultura[]>([])
   const [points, setPoints] = useState<LatLng[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetch("http://localhost:8000/culturas")
+      .then((r) => r.json())
+      .then(setCulturas)
+      .catch(() => {})
+  }, [])
 
   // Trava scroll da página
   useEffect(() => {
@@ -295,7 +296,7 @@ export default function DemoPage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 w-full max-w-2xl">
-            {CULTURAS.map((c) => (
+            {culturas.map((c) => (
               <button
                 key={c.id}
                 type="button"

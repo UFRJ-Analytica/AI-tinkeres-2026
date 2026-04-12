@@ -12,16 +12,16 @@ app.add_middleware(
 )
 
 CULTURAS = [
-    {"id": "soja",        "label": "Soja"},
-    {"id": "milho",       "label": "Milho"},
-    {"id": "algodao",     "label": "Algodão"},
-    {"id": "arroz",       "label": "Arroz"},
-    {"id": "feijao",      "label": "Feijão"},
-    {"id": "trigo",       "label": "Trigo"},
-    {"id": "cana",        "label": "Cana-de-açúcar"},
-    {"id": "girassol",    "label": "Girassol"},
-    {"id": "sorgo",       "label": "Sorgo"},
-    {"id": "amendoim",    "label": "Amendoim"},
+    {"id": "soja",        "label": "Soja",           "emoji": "🫘"},
+    {"id": "milho",       "label": "Milho",          "emoji": "🌽"},
+    {"id": "algodao",     "label": "Algodão",        "emoji": "🌿"},
+    {"id": "arroz",       "label": "Arroz",          "emoji": "🌾"},
+    {"id": "feijao",      "label": "Feijão",         "emoji": "🫘"},
+    {"id": "trigo",       "label": "Trigo",          "emoji": "🌾"},
+    {"id": "cana",        "label": "Cana-de-açúcar", "emoji": "🎋"},
+    {"id": "girassol",    "label": "Girassol",       "emoji": "🌻"},
+    {"id": "sorgo",       "label": "Sorgo",          "emoji": "🌾"},
+    {"id": "amendoim",    "label": "Amendoim",       "emoji": "🥜"},
 ]
 
 

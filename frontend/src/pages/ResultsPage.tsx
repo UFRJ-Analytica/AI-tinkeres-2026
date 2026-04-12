@@ -105,6 +105,15 @@ interface AnalysisData {
     why: string[]
     action: string
   }
+  map_layer: {
+    geometry: {
+      type: string
+      coordinates: number[][][]
+    }
+    fill_color: string
+    stroke_color: string
+    tooltip_summary: string
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -268,7 +277,7 @@ export default function ResultsPage() {
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false) })
       .catch(() => setLoading(false))
-  }, [])
+  }, [data])
 
   useEffect(() => {
     document.documentElement.style.overflow = "hidden"
@@ -345,7 +354,7 @@ export default function ResultsPage() {
       <div className="flex-1 flex overflow-hidden min-h-0">
 
         {/* ── Painel esquerdo: scroll ── */}
-        <div className="w-full lg:w-[520px] xl:w-[580px] shrink-0 overflow-y-auto border-r min-h-0">
+        <div className="w-full lg:w-130 xl:w-145 shrink-0 overflow-y-auto border-r min-h-0">
           <div className="p-5 space-y-5">
 
             {/* Hero: Score + Info */}
@@ -542,7 +551,7 @@ export default function ResultsPage() {
           </MapContainer>
 
           {/* Tooltip overlay */}
-          <div className="absolute bottom-4 left-4 z-[1000] bg-background/95 backdrop-blur-sm border rounded-lg px-3 py-2 text-xs shadow-md">
+          <div className="absolute bottom-4 left-4 z-1000 bg-background/95 backdrop-blur-sm border rounded-lg px-3 py-2 text-xs shadow-md">
             {data.map_layer.tooltip_summary}
           </div>
         </div>
