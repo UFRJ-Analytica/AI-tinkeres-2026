@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import {
   ComposedChart,
@@ -28,6 +28,10 @@ import {
   CheckCircle2,
   Sprout,
   ChevronDown,
+  MessageCircle,
+  X,
+  Send,
+  Loader2,
 } from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -114,6 +118,12 @@ interface AnalysisData {
     stroke_color: string
     tooltip_summary: string
   }
+  conversation_id?: string
+}
+
+interface ChatMessage {
+  role: "user" | "assistant"
+  content: string
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -264,12 +274,131 @@ function SourceCard({
 
 // ── Página ────────────────────────────────────────────────────────────────────
 
+// ── Chat Panel ────────────────────────────────────────────────────────────────
+
+function ChatPanel({
+  conversationId,
+  onClose,
+}: {
+  conversationId: string
+  onClose: () => void
+}) {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: "assistant",
+      content: "Olá! Sou o copiloto SafraViva. Pode me perguntar qualquer coisa sobre a análise da sua área.",
+    },
+  ])
+  const [input, setInput] = useState("")
+  const [sending, setSending] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  async function handleSend() {
+    const text = input.trim()
+    if (!text || sending) return
+    setInput("")
+    setMessages((prev) => [...prev, { role: "user", content: text }])
+    setSending(true)
+    try {
+      const res = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversation_id: conversationId, message: text }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.detail ?? "Erro")
+      setMessages((prev) => [...prev, { role: "assistant", content: json.response }])
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erro ao contatar o copiloto."
+      setMessages((prev) => [...prev, { role: "assistant", content: `Desculpe, ocorreu um erro: ${msg}` }])
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-primary/15">
+            <Sprout className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold">Copiloto SafraViva</p>
+            <p className="text-[10px] text-muted-foreground">Tire dúvidas sobre sua análise</p>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+        {messages.map((m, i) => (
+          <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
+            <div
+              className={cn(
+                "max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed",
+                m.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-foreground"
+              )}
+            >
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {sending && (
+          <div className="flex justify-start">
+            <div className="bg-muted rounded-xl px-3 py-2">
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="p-3 border-t shrink-0">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+            placeholder="Escreva sua pergunta…"
+            disabled={sending}
+            className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim() || sending}
+            className="p-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-40 hover:bg-primary/90 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ResultsPage() {
   const location = useLocation()
   const [data, setData] = useState<AnalysisData | null>(
     (location.state as { analysis?: AnalysisData } | null)?.analysis ?? null
   )
   const [loading, setLoading] = useState(!data)
+  const [chatOpen, setChatOpen] = useState(false)
 
   useEffect(() => {
     if (data) return
@@ -554,6 +683,32 @@ export default function ResultsPage() {
           <div className="absolute bottom-4 left-4 z-1000 bg-background/95 backdrop-blur-sm border rounded-lg px-3 py-2 text-xs shadow-md">
             {data.map_layer.tooltip_summary}
           </div>
+
+          {/* Chat panel (slide-in over the map) */}
+          {data.conversation_id && (
+            <>
+              {/* Floating button */}
+              {!chatOpen && (
+                <button
+                  onClick={() => setChatOpen(true)}
+                  className="absolute bottom-4 right-4 z-1000 flex items-center gap-2 bg-primary text-primary-foreground rounded-full px-4 py-3 shadow-lg hover:bg-primary/90 transition-all text-sm font-medium"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Pergunte ao copiloto
+                </button>
+              )}
+
+              {/* Chat panel */}
+              {chatOpen && (
+                <div className="absolute bottom-4 right-4 z-1000 w-[380px] h-[520px] bg-background border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+                  <ChatPanel
+                    conversationId={data.conversation_id}
+                    onClose={() => setChatOpen(false)}
+                  />
+                </div>
+              )}
+            </>
+          )}
         </div>
 
       </div>
