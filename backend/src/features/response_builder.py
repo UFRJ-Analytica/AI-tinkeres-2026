@@ -36,6 +36,7 @@ def build_frontend_response(
             "temp_mean_7d_c": climate_data["temp_mean_7d_c"],
             "temp_max_7d_c": climate_data["temp_max_7d_c"],
             "humidity_mean_7d_pct": climate_data["humidity_mean_7d_pct"],
+            "wind_mean_7d_ms": climate_data["wind_mean_7d_ms"],
         },
         "risk_flags": risk_result["risk_flags"],
         "forecast_timeseries": climate_data["forecast_timeseries"],

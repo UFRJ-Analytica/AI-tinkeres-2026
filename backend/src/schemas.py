@@ -52,6 +52,7 @@ class Metrics(BaseModel):
     temp_mean_7d_c: float
     temp_max_7d_c: float
     humidity_mean_7d_pct: float
+    wind_mean_7d_ms: float
 
 
 class RiskFlags(BaseModel):
@@ -82,3 +83,4 @@ class AnalysisResponse(BaseModel):
     forecast_timeseries: list[ForecastPoint]
     map_layer: MapLayer
     copilot_response: CopilotResponse
+    conversation_id: str | None = None

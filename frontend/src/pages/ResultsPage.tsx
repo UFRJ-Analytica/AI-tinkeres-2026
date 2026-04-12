@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 import { API_ENDPOINTS } from "@/config"
+import ReactMarkdown from "react-markdown"
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -287,7 +288,7 @@ function ChatPanel({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Olá! Sou o copiloto SafraViva. Pode me perguntar qualquer coisa sobre a análise da sua área.",
+      content: "Olá! Sou a Safrinia, sua assistente agroclimática. Pode me perguntar qualquer coisa sobre a análise da sua área.",
     },
   ])
   const [input, setInput] = useState("")
@@ -330,7 +331,7 @@ function ChatPanel({
             <Sprout className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Copiloto SafraViva</p>
+            <p className="text-sm font-semibold">Safrinia</p>
             <p className="text-[10px] text-muted-foreground">Tire dúvidas sobre sua análise</p>
           </div>
         </div>
@@ -354,7 +355,23 @@ function ChatPanel({
                   : "bg-muted text-foreground"
               )}
             >
-              {m.content}
+              {m.role === "assistant" ? (
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                    em: ({ children }) => <em className="italic">{children}</em>,
+                    ul: ({ children }) => <ul className="list-disc pl-4 space-y-0.5 my-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-4 space-y-0.5 my-1">{children}</ol>,
+                    li: ({ children }) => <li>{children}</li>,
+                    code: ({ children }) => <code className="bg-background/50 rounded px-1 text-xs font-mono">{children}</code>,
+                  }}
+                >
+                  {m.content}
+                </ReactMarkdown>
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}
@@ -621,7 +638,7 @@ export default function ResultsPage() {
                     <Sprout className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className="text-sm font-semibold">Copiloto SafraViva</CardTitle>
+                    <CardTitle className="text-sm font-semibold">Safrinia</CardTitle>
                     <p className="text-xs text-muted-foreground">Diagnóstico em linguagem natural</p>
                   </div>
                 </div>
@@ -713,7 +730,7 @@ export default function ResultsPage() {
                   className="absolute bottom-4 right-4 z-1000 flex items-center gap-2 bg-primary text-primary-foreground rounded-full px-4 py-3 shadow-lg hover:bg-primary/90 transition-all text-sm font-medium"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  Pergunte ao copiloto
+                  Fale com a Safrinia
                 </button>
               )}
 

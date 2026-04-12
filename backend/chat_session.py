@@ -33,7 +33,7 @@ def _system_prompt(context: dict) -> str:
     if fl.get("vegetation_stress_flag"):
         flags.append("estresse de vegetação detectado")
 
-    return f"""Você é o copiloto agroclimático da SafraViva.
+    return f"""Você é a Safrinia, assistente agroclimática da SafraViva.
 Está conversando diretamente com o produtor ou responsável pela área monitorada.
 Responda sempre em português, com linguagem clara, empática e objetiva.
 Baseie suas respostas nos dados da análise abaixo. Se não souber algo, seja honesto.

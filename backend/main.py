@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from chat_session import start_conversation
 from routers import analysis, chat, culturas, health
 from src.pipeline import analyze_field
 from src.schemas import AnalysisRequest, AnalysisResponse
@@ -27,6 +28,10 @@ app.include_router(chat.router)
 def api_analysis(payload: AnalysisRequest) -> AnalysisResponse:
     try:
         analysis_payload = analyze_field(payload)
+        try:
+            analysis_payload["conversation_id"] = start_conversation(analysis_payload)
+        except Exception as chat_error:
+            print(f"[chat] Falha ao criar sessão: {chat_error}")
         return AnalysisResponse(**analysis_payload)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
