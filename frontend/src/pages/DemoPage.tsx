@@ -62,13 +62,10 @@ function MapClickHandler({ onClick }: { onClick: (ll: LatLng) => void }) {
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
-type Perfil = "seguradora" | "produtor"
-
 interface FormData {
   nome: string
   empresa: string
   email: string
-  perfil: Perfil
 }
 
 // ── Página ───────────────────────────────────────────────────────────────────
@@ -78,7 +75,6 @@ export default function DemoPage() {
     nome: "",
     empresa: "",
     email: "",
-    perfil: "seguradora",
   })
   const [points, setPoints] = useState<LatLng[]>([])
   const [confirmed, setConfirmed] = useState(false)
@@ -105,7 +101,6 @@ export default function DemoPage() {
     const centroide = calcCentroid(points)
 
     const payload = {
-      perfil: form.perfil,
       nome: form.nome,
       empresa: form.empresa,
       email: form.email,
@@ -170,10 +165,10 @@ export default function DemoPage() {
       </header>
 
       {/* ── Layout principal ── */}
-      <div className="flex-1 container mx-auto max-w-7xl px-4 py-6 grid lg:grid-cols-[360px_1fr] gap-6 items-start">
+      <div className="flex-1 container mx-auto max-w-7xl px-4 py-6 grid lg:grid-cols-[360px_1fr] gap-6 items-start lg:h-[calc(100vh-56px)] lg:overflow-hidden">
 
         {/* ── Painel esquerdo: formulário ── */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4 lg:h-full lg:overflow-hidden">
           <div>
             <h1 className="text-xl font-bold">Solicitar Demo</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -219,36 +214,11 @@ export default function DemoPage() {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label>Perfil</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(
-                    [
-                      { val: "seguradora", label: "Seguradora" },
-                      { val: "produtor", label: "Produtor Rural" },
-                    ] as { val: Perfil; label: string }[]
-                  ).map(({ val, label }) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => setForm({ ...form, perfil: val })}
-                      className={cn(
-                        "rounded-md border px-3 py-2 text-sm font-medium transition-colors",
-                        form.perfil === val
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:bg-accent"
-                      )}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </CardContent>
           </Card>
 
           {/* Status do polígono */}
-          <Card>
+          <Card className="flex-1 min-h-0">
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Área selecionada</span>
@@ -301,6 +271,7 @@ export default function DemoPage() {
           </Card>
 
           {/* CTA / Sucesso */}
+          <div className="mt-auto flex flex-col gap-2">
           {confirmed ? (
             <Alert className="border-primary/30 bg-primary/8">
               <CheckCircle2 className="h-4 w-4 text-primary" />
@@ -331,10 +302,11 @@ export default function DemoPage() {
                 : "Marque pelo menos 3 pontos no mapa."}
             </p>
           )}
+          </div>
         </div>
 
         {/* ── Painel direito: mapa ── */}
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3 lg:h-full lg:overflow-hidden">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-primary" />
@@ -375,13 +347,10 @@ export default function DemoPage() {
           </Alert>
 
           {/* Mapa Leaflet */}
-          <div
-            className="rounded-xl overflow-hidden border shadow-sm"
-            style={{ height: "calc(100vh - 230px)", minHeight: 480 }}
-          >
+          <div className="flex-1 min-h-0 rounded-xl overflow-hidden border shadow-sm" style={{ minHeight: 400 }}>
             <MapContainer
-              center={[-14.235, -51.9253]}
-              zoom={4}
+              center={[-12.7, -55.9]}
+              zoom={6}
               style={{ height: "100%", width: "100%" }}
             >
               <TileLayer
