@@ -801,7 +801,7 @@ function FieldMap({
           {!chatOpen && (
             <button
               onClick={onOpenChat}
-              className="absolute right-3 top-3 z-[1000] flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-xs font-medium text-primary-foreground shadow-lg transition-all hover:bg-primary/90 sm:top-auto sm:bottom-4 sm:px-4 sm:py-3 sm:text-sm"
+              className="absolute top-3 right-3 z-1000 flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-xs font-medium text-primary-foreground shadow-lg transition-all hover:bg-primary/90 sm:bottom-4 sm:top-auto sm:px-4 sm:py-3 sm:text-sm"
             >
               <MessageCircle className="h-4 w-4" />
               Safrinia
@@ -813,11 +813,8 @@ function FieldMap({
               className={cn(
                 "flex flex-col overflow-hidden border bg-background shadow-2xl transition-all duration-300",
                 chatFullscreen
-                  ? "fixed inset-0 z-[9999] rounded-none"
-                  : [
-                      "fixed inset-x-3 bottom-3 z-[1000] h-[42vh] rounded-lg",
-                      "sm:absolute sm:inset-x-auto sm:bottom-3 sm:right-4 sm:h-[32rem] sm:w-[24rem]",
-                    ].join(" ")
+                  ? "fixed inset-0 z-9999 rounded-none"
+                  : "absolute inset-x-3 bottom-3 z-1000 h-[min(32rem,calc(100%-1.5rem))] rounded-lg sm:right-4 sm:left-auto sm:h-130 sm:w-95"
               )}
             >
               <ChatPanel
@@ -1061,7 +1058,7 @@ export default function ResultsPage() {
                 onOpenChat={() => setChatOpen(true)}
                 onCloseChat={() => { setChatOpen(false); setChatFullscreen(false) }}
                 onToggleFullscreen={() => setChatFullscreen((f) => !f)}
-                className="h-[56vh] min-h-80 rounded-lg border"
+                className="h-[48vh] min-h-80 rounded-lg border"
               />
             </div>
 
