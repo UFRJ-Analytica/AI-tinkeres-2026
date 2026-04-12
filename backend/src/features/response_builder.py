@@ -64,6 +64,8 @@ def _build_data_sources(
             "ndvi_delta_30d": territory.get("ndvi_delta_30d", 0.0),
             "ndvi_anomaly": territory.get("ndvi_anomaly", 0.0),
             "vegetation_mismatch_flag": bool(territory.get("vegetation_mismatch_flag", False)),
+            "ndvi_heatmap": territory.get("ndvi_heatmap", {"type": "FeatureCollection", "features": []}),
+            "ndvi_heatmap_meta": territory.get("ndvi_heatmap_meta", {"cell_count": 0}),
             "signals": satellite_signals,
             "ndvi_timeseries": territory.get("ndvi_timeseries", []),
         },

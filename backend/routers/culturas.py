@@ -9,9 +9,7 @@ CULTURAS = [
     {"id": "arroz",    "label": "Arroz",          "emoji": "🌾"},
     {"id": "feijao",   "label": "Feijão",         "emoji": "🫘"},
     {"id": "trigo",    "label": "Trigo",          "emoji": "🌾"},
-    {"id": "cana",     "label": "Cana-de-açúcar", "emoji": "🎋"},
     {"id": "girassol", "label": "Girassol",       "emoji": "🌻"},
-    {"id": "sorgo",    "label": "Sorgo",          "emoji": "🌾"},
     {"id": "amendoim", "label": "Amendoim",       "emoji": "🥜"},
 ]
 

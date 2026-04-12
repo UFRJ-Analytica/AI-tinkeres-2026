@@ -47,6 +47,8 @@ class PipelineTestCase(unittest.TestCase):
         self.assertIn("climate", result["data_sources"])
         self.assertIn("climate_history", result["data_sources"])
         self.assertIn("satellite", result["data_sources"])
+        self.assertIn("ndvi_heatmap", result["data_sources"]["satellite"])
+        self.assertIn("type", result["data_sources"]["satellite"]["ndvi_heatmap"])
 
     def test_analysis_accepts_iso_string_dates(self) -> None:
         payload = {
