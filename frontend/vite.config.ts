@@ -46,12 +46,12 @@ export default defineConfig({
     },
     // Minificação avançada com esbuild (padrão e rápida)
     minify: "esbuild",
-    // Remove console.log e debugger em produção
-    esbuildOptions: {
-      drop: ["console", "debugger"],
-    },
     // Compressão CSS
     cssMinify: true,
+  },
+  // Remove console.log e debugger em produção
+  esbuild: {
+    drop: ["console", "debugger"],
   },
   // Garante caminhos corretos no Railway (sem subpath)
   base: "/",
