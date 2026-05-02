@@ -52,7 +52,7 @@ def health():
 def listar_ufs():
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute(f'SELECT DISTINCT UPPER(TRIM("UF")) AS uf FROM {TABLE_NAME} WHERE "UF" IS NOT NULL ORDER BY uf')
+    cursor.execute(f'SELECT DISTINCT UPPER(TRIM("uf")) AS uf FROM {TABLE_NAME} WHERE "uf" IS NOT NULL ORDER BY uf')
     rows = cursor.fetchall()
     conn.close()
     return {"total": len(rows), "dados": [r["uf"] for r in rows]}
@@ -62,7 +62,7 @@ def listar_municipios(uf: Optional[str] = None):
     query = f'SELECT DISTINCT UPPER(TRIM("municipio")) AS municipio FROM {TABLE_NAME} WHERE "municipio" IS NOT NULL'
     params = []
     if uf:
-        query += ' AND UPPER(TRIM("UF")) = %s'
+        query += ' AND UPPER(TRIM("uf")) = %s'
         params.append(uf.upper().strip())
     query += " ORDER BY municipio"
 
@@ -77,7 +77,7 @@ def listar_municipios(uf: Optional[str] = None):
 def listar_culturas():
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute(f'SELECT DISTINCT UPPER(TRIM("Nome_cultura")) AS cultura FROM {TABLE_NAME} WHERE "Nome_cultura" IS NOT NULL ORDER BY cultura')
+    cursor.execute(f'SELECT DISTINCT UPPER(TRIM("cultura")) AS cultura FROM {TABLE_NAME} WHERE "cultura" IS NOT NULL ORDER BY cultura')
     rows = cursor.fetchall()
     conn.close()
     return {"total": len(rows), "dados": [r["cultura"] for r in rows]}
@@ -89,7 +89,7 @@ def zarc(
     cultura: Optional[str] = None,
     cod_solo: Optional[int] = None,
     geocodigo: Optional[str] = None,
-    safra_ini: Optional[int] = None,
+    ano_referencia: Optional[int] = None,
     limite: int = 500
 ):
     if not any([uf, municipio, cultura, geocodigo]):
@@ -99,20 +99,20 @@ def zarc(
     params = []
 
     if uf:
-        query += ' AND UPPER("UF") = %s'
+        query += ' AND UPPER("uf") = %s'
         params.append(uf.upper())
     if municipio:
         query += ' AND UPPER("municipio") = %s'
         params.append(municipio.upper())
     if cultura:
-        query += ' AND UPPER("Nome_cultura") = %s'
+        query += ' AND UPPER("cultura") = %s'
         params.append(cultura.upper())
     if cod_solo:
-        query += ' AND "Cod_Solo" = %s'
+        query += ' AND "cod_solo" = %s'
         params.append(cod_solo)
-    if safra_ini:
-        query += ' AND "SafraIni" = %s'
-        params.append(safra_ini)
+    if ano_referencia:
+        query += ' AND "ano_referencia" = %s'
+        params.append(ano_referencia)
     if geocodigo:
         query += ' AND CAST("geocodigo" AS TEXT) = %s'
         params.append(str(geocodigo).strip())
@@ -129,24 +129,26 @@ def zarc(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/alerta")
-def alerta(geocodigo: str = Query(...), ano: int = Query(...), solo: int = Query(3)):
-    query = f'SELECT "valor_frequencia", "Nome_cultura" FROM {TABLE_NAME} WHERE CAST("geocodigo" AS TEXT) = %s AND "SafraIni" = %s AND "Cod_Solo" = %s LIMIT 1'
+def alerta(geocodigo: str = Query(...), ano_referencia: int = Query(...), cod_solo: int = Query(3)):
+    # Buscando as novas colunas
+    query = f'SELECT "risco_valor", "cultura" FROM {TABLE_NAME} WHERE CAST("geocodigo" AS TEXT) = %s AND "ano_referencia" = %s AND "cod_solo" = %s LIMIT 1'
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute(query, [str(geocodigo), int(ano), int(solo)])
+    cursor.execute(query, [str(geocodigo), int(ano_referencia), int(cod_solo)])
     row = cursor.fetchone()
     conn.close()
 
     if not row:
         return {"status": "Dados não encontrados no banco."}
 
-    freq = float(row["valor_frequencia"])
-    status = "Risco Aceitável" if freq >= 80 else "Atenção: Alto Risco Climático"
+    # Nova lógica: ZARC opera com riscos de 20%, 30% ou 40%. Acima disso é alto risco.
+    risco = float(row["risco_valor"])
+    status = "Risco Aceitável" if risco <= 40 else "Atenção: Alto Risco Climático"
     
     return {
         "municipio_cod": geocodigo,
-        "cultura": row["Nome_cultura"],
-        "ano": ano,
-        "frequencia_sucesso": freq,
+        "cultura": row["cultura"],
+        "ano_referencia": ano_referencia,
+        "risco_percentual": risco,
         "status_historico": status
     }
