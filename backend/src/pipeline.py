@@ -6,6 +6,7 @@ from src.features.map_layer import build_map_layer
 from src.features.response_builder import build_frontend_response
 from src.ingest.climate_forecast import get_climate_forecast
 from src.ingest.climate_history import get_climate_history
+from src.ingest.satellite_imagery import get_satellite_imagery_layer
 from src.ingest.territorial_context import get_territorial_context
 from src.ingest.spatial_context import derive_spatial_context
 from src.scoring.alerts import generate_alerts_and_recommendations
@@ -40,6 +41,11 @@ def analyze_field(payload: Any) -> dict[str, Any]:
         spatial_context=spatial_context,
         analysis_timestamp=inputs["analysis_timestamp"],
     )
+    satellite_imagery_layer = get_satellite_imagery_layer(
+        geometry=inputs["geometry"],
+        spatial_context=spatial_context,
+        analysis_timestamp=inputs["analysis_timestamp"],
+    )
     agro_context = get_agro_context(
         inputs,
         spatial_context,
@@ -55,6 +61,7 @@ def analyze_field(payload: Any) -> dict[str, Any]:
         climate_data=climate_data,
         climate_history=climate_history,
         agro_context=agro_context,
+        satellite_imagery_layer=satellite_imagery_layer,
         risk_result=risk_result,
         alert_data=alert_data,
         map_layer=map_layer,

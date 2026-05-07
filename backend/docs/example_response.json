@@ -47,6 +47,29 @@
       "provider": "Google Earth Engine (MODIS/Sentinel-2)",
       "last_image": "2026-04-10T10:22:00Z",
       "cloud_cover_pct": 8.0,
+      "imagery_layer": {
+        "source": "gee",
+        "provider": "Google Earth Engine",
+        "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+        "mode": "xyz_tiles",
+        "style": "true_color",
+        "tile_url_template": "https://earthengine.googleapis.com/v1/projects/.../tiles/{z}/{x}/{y}",
+        "bounds": {
+          "min_lat": -12.49,
+          "max_lat": -12.43,
+          "min_lon": -55.81,
+          "max_lon": -55.74
+        },
+        "recommended_zoom": 14,
+        "min_zoom": 8,
+        "max_zoom": 19,
+        "display_min_zoom": 15,
+        "display_max_zoom": 19,
+        "availability": "high_zoom_only",
+        "image_date": "2026-04-10",
+        "cloud_cover_pct": 8.0,
+        "attribution": "Contains modified Copernicus Sentinel data 2026"
+      },
       "signals": [
         "NDVI medio recente: 0.52 (MOD13Q1).",
         "EVI medio recente: 0.44 (MOD13Q1).",

@@ -7,6 +7,7 @@ def _build_data_sources(
     climate_data: dict[str, Any],
     climate_history: dict[str, Any] | None,
     agro_context: dict[str, Any],
+    satellite_imagery_layer: dict[str, Any] | None,
 ) -> dict[str, Any]:
     territory = agro_context["territorial_context"]
     zarc_context = agro_context.get("zarc_context", {})
@@ -66,6 +67,7 @@ def _build_data_sources(
             "ndvi_delta_30d": territory.get("ndvi_delta_30d", 0.0),
             "ndvi_anomaly": territory.get("ndvi_anomaly", 0.0),
             "vegetation_mismatch_flag": bool(territory.get("vegetation_mismatch_flag", False)),
+            "imagery_layer": satellite_imagery_layer or {},
             "ndvi_heatmap": territory.get("ndvi_heatmap", {"type": "FeatureCollection", "features": []}),
             "ndvi_heatmap_meta": territory.get("ndvi_heatmap_meta", {"cell_count": 0}),
             "signals": satellite_signals,
@@ -112,6 +114,7 @@ def build_frontend_response(
     climate_data: dict[str, Any],
     climate_history: dict[str, Any] | None,
     agro_context: dict[str, Any],
+    satellite_imagery_layer: dict[str, Any] | None,
     risk_result: dict[str, Any],
     alert_data: dict[str, Any],
     map_layer: dict[str, Any],
@@ -145,7 +148,7 @@ def build_frontend_response(
             "wind_mean_7d_ms": climate_data["wind_mean_7d_ms"],
         },
         "risk_flags": risk_result["risk_flags"],
-        "data_sources": _build_data_sources(climate_data, climate_history, agro_context),
+        "data_sources": _build_data_sources(climate_data, climate_history, agro_context, satellite_imagery_layer),
         "forecast_timeseries": climate_data["forecast_timeseries"],
         "map_layer": map_layer,
         "copilot_response": alert_data["copilot_response"],
